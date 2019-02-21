@@ -1,34 +1,44 @@
 import os
 from jupyterhub.spawner import LocalProcessSpawner
-from traitlets import Unicode, Type
+from traitlets import Unicode, Type, Instance
 
 from traitlets.config.configurable import HasTraits
 
 
 class ParamForm(HasTraits):
-    text = Unicode()
-    src = Unicode('default.html')
+    source = Unicode()
+
+    def __init__(self, source):
+        self.source = source
 
     def generate(self):
-        if self.text:
-            return self.text
-        else:
-            with open(self.src) as f:
-                return f.read()
+        with open(self.source) as f:
+            return f.read()
 
     def massage_options(self, formdata):
         return formdata
 
 
-class DemoFormSpawner(LocalProcessSpawner):
+class ParamFormText(ParamForm):
 
-    form_cls = ParamForm()
+    def generate(self):
+        return self.source
+
+
+class FormMixin(HasTraits):
+
+    form_inst = Instance(ParamForm, help="Instance fo the form class to use"
+                         ).tag(config=True)
 
     @staticmethod
     def options_form(self):
-        self.log.debug(self.form_cls)
-        return self.form_cls.generate()
+        self.log.debug(self.form_inst)
+        return self.form_inst.generate()
 
     def options_from_form(self, formdata):
-        self.log.debug(formdata)
-        return self.form_cls.massage_options(formdata)
+        self.log.warning("GENREATING FORM: %s", formdata)
+        return self.form_inst.massage_options(formdata)
+
+
+class FormLocalSpawner(FormMixin, LocalProcessSpawner):
+    pass
