@@ -1,5 +1,8 @@
 from jupyterhub.spawner import LocalProcessSpawner
+from .sdccslurm import SlurmSpawner
 from traitlets import Unicode, Type, Instance
+
+import os
 
 from traitlets.config.configurable import HasTraits
 
@@ -11,7 +14,8 @@ class ParamForm(HasTraits):
         self.source = source
 
     def generate(self):
-        with open(self.source) as f:
+        path = os.path.join(os.path.dirname(__file__), self.source)
+        with open(path) as f:
             return f.read()
 
     def massage_options(self, formdata):
@@ -23,7 +27,7 @@ class ParamFormText(ParamForm):
     def generate(self):
         return self.source
 
-
+# Foo
 class FormMixin(HasTraits):
 
     form_inst = Instance(ParamForm, help="Instance fo the form class to use"
@@ -40,4 +44,9 @@ class FormMixin(HasTraits):
 
 
 class FormLocalSpawner(FormMixin, LocalProcessSpawner):
+    pass
+
+
+class FormSlurmSpawner(FormMixin, SlurmSpawner):
+    # req_partition = Unicode('', )
     pass

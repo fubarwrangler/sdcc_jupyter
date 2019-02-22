@@ -5,7 +5,7 @@ c.FormLocalSpawner.form_inst = ParamForm(source='static/ic.html')
 c.Spawner.debug = True
 # c.Spawner.default_url = '/lab'
 
-c.PAMAuthenticator.open_sessions = False
+# c.PAMAuthenticator.open_sessions = False
 
 
 #c.JupyterHub.spawner_class = 'wrapspawner.ProfilesSpawner'
