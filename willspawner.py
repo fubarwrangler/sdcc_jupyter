@@ -1,4 +1,3 @@
-import os
 from jupyterhub.spawner import LocalProcessSpawner
 from traitlets import Unicode, Type, Instance
 
