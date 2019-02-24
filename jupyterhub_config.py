@@ -1,7 +1,7 @@
-from willspawner import ParamForm
+from sdcc_jupyter_spawners import ParamForm
 
-c.JupyterHub.spawner_class = 'willspawner.FormLocalSpawner'
-c.FormLocalSpawner.form_inst = ParamForm(source='static/ic.html')
+c.JupyterHub.spawner_class = 'sdcc_jupyter_spawners.ChooseSpawner'
+c.ChooseSpawner.form_inst = ParamForm(source='static/ic.html')
 c.Spawner.debug = True
 # c.Spawner.default_url = '/lab'
 
