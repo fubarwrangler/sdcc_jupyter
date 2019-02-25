@@ -1,22 +1,22 @@
 <div class="form-group row">
     <div class="col-sm-4">
         <label for="partition">Select IC Partition</label>
-        <select id="partition" class="form-control" name="account">
+        <select id="partition" class="form-control" name="req_partition">
             <option value="usatlas+pq302951">USAtlas</option>
             <option value="debug+test">Debug</option>
         </select>
     </div>
     <div class="col-sm-2">
         <label for="gpus">Num GPUs</label>
-        <input type="number" class="form-control" max=2 min=0 value="1" id="gpus" name="gpus"/>
+        <input type="number" class="form-control" max=2 min=0 value="1" id="gpus" name="req_ngpus"/>
     </div>
     <div class="col-sm-2">
         <label for="ram">RAM (Gb)</label>
-        <input type="number" class="form-control" max=32 min=1 value="4" id="ram" name="ram"/>
+        <input type="number" class="form-control" max=32 min=1 value="4" id="ram" name="req_memory"/>
     </div>
     <div class="col-sm-3">
         <label for="runtime">Max Runtime (min)</label>
-        <input type="time" class="form-control" max=600 min=10 step=10 value="30" id="runtime" name="runtime"/>
+        <input type="time" class="form-control" max=600 min=10 step=10 value="30" id="runtime" name="req_runtime"/>
     </div>
 </div>
 <label for="local">Run Locally?</label>

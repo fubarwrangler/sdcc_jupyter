@@ -29,6 +29,17 @@ class ParamFormText(ParamForm):
         return self.source
 
 
+class SlurmForm(ParamForm):
+    def massage_options(self, formdata):
+        data = super().massage_options(formdata)
+        intify = {'req_memory', 'req_ngpus'}
+        data = {k: int(v) if v in intify else v for k, v in data.items()}
+        partition, account = data['req_partition'].split('+')
+        data['req_partition'] = partition
+        data['req_account'] = account
+        return data
+
+
 class FormMixin(HasTraits):
 
     form_inst = Instance(ParamForm, help="Instance fo the form class to use"
@@ -47,8 +58,9 @@ class FormMixin(HasTraits):
 class WrapFormSpawner(FormMixin, WrapSpawner):
     def options_from_form(self, formdata):
         self.child_class = self.set_class(formdata)
-        self.log.debug("My option parent: %s", super().options_from_form)
-        return super().options_from_form(formdata)
+        self.child_config = self.form_inst.massage_options(formdata)
+        self.log.debug("My child config: %s", self.child_config)
+        return {}
 
     def set_class(self, data):
         raise NotImplementedError('Must implement in subclass')

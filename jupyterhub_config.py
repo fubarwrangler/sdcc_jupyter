@@ -1,7 +1,7 @@
-from sdcc_jupyter_spawners import ParamForm
+from sdcc_jupyter_spawners import SlurmForm
 
 c.JupyterHub.spawner_class = 'sdcc_jupyter_spawners.ChooseSpawner'
-c.ChooseSpawner.form_inst = ParamForm(source='static/ic.html')
+c.ChooseSpawner.form_inst = SlurmForm(source='static/ic.html')
 c.Spawner.debug = True
 # c.Spawner.default_url = '/lab'
 
