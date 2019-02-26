@@ -2,6 +2,7 @@ from jupyterhub.spawner import LocalProcessSpawner
 from .sdccslurm import SlurmSpawner
 from wrapspawner import WrapSpawner
 from traitlets import Unicode, Type, Instance
+from jinja2 import Template
 
 import os
 
@@ -37,7 +38,13 @@ class SlurmForm(ParamForm):
         partition, account = data['req_partition'].split('+')
         data['req_partition'] = partition
         data['req_account'] = account
+        data['req_runtime'] = '%d:00' % int(data['req_runtime'])
         return data
+
+    def generate(self):
+        vars = {}
+
+        return Template(super().generate()).render(**vars)
 
 
 class FormMixin(HasTraits):
@@ -58,7 +65,8 @@ class FormMixin(HasTraits):
 class WrapFormSpawner(FormMixin, WrapSpawner):
     def options_from_form(self, formdata):
         self.child_class = self.set_class(formdata)
-        self.child_config = self.form_inst.massage_options(formdata)
+        if self.child_class != LocalProcessSpawner:
+            self.child_config = self.form_inst.massage_options(formdata)
         self.log.debug("My child config: %s", self.child_config)
         return {}
 
@@ -71,7 +79,7 @@ class FormLocalSpawner(FormMixin, LocalProcessSpawner):
 
 
 class FormSlurmSpawner(FormMixin, SlurmSpawner):
-    # req_partition = Unicode('', )
+
     def options_from_form(self, formdata):
         self.log.info("SLURM: config: %s", formdata)
         return formdata
@@ -80,7 +88,7 @@ class FormSlurmSpawner(FormMixin, SlurmSpawner):
 class ChooseSpawner(WrapFormSpawner):
     def set_class(self, data):
         if 'local' in data:
-            self.log.info("Choosing local spawner...")
+            self.log.info("Choosing local spawner... %s", data)
             return LocalProcessSpawner
         else:
             self.log.info("Choosing SLURM spawner...")
