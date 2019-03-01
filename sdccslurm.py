@@ -10,6 +10,7 @@ from .formspawners import ParamForm, FormMixin, WrapFormSpawner
 class SDCCSlurmSpawner(SlurmSpawner):
     req_jhubpath = Unicode('/u0b/software/anaconda3/bin')
     req_runtime = Unicode('30:00')
+    req_scontainer = Unicode('')
     batch_script = '''#!/bin/sh
 #SBATCH --partition={partition}
 #SBATCH --time={runtime}
@@ -22,14 +23,34 @@ class SDCCSlurmSpawner(SlurmSpawner):
 #SBATCH --account={account}
 #SBATCH {options}
 export PATH="{jhubpath}:$PATH"
+export SCONTAINER="{scontainer}"
 unset XDG_RUNTIME_DIR
 {cmd}
 '''
+    cmd = ['/u0b/software/images/container_run.sh']
 
 
 class SlurmForm(ParamForm):
 
     source = 'static/ic.html'
+
+    # Category: list[ (Name, path), (name2, path2)... ]
+    containers = {
+        'Native': [('Native', '')],
+        'Generic': [
+            ('SL7.3', '/u0b/software/images/generic-SL7.simg'),
+            ('SL6.4', '/u0b/software/images/generic-SL6.simg'),
+        ],
+        'USATLAS': [
+            ('Doug\'s Container', '/u0b/software/images/generic-SL7.simg'),
+        ],
+    }
+
+    # Partition+account, display-name, container-image-path
+    partitions = (
+        ["usatlas+pq302951", 'USAtlas', '/u0b/software/images/generic-SL7.simg'],
+        ['debug+default', 'Debug', ''],
+    )
 
     def massage_options(self, formdata):
         data = super().massage_options(formdata)
@@ -42,7 +63,7 @@ class SlurmForm(ParamForm):
         return data
 
     def generate(self):
-        vars = {}
+        vars = {'containermap': self.containers, 'partitions': self.partitions}
         return Template(super().generate()).render(**vars)
 
 

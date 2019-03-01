@@ -7,18 +7,31 @@ or select to run locally on the submit node.
 <fieldset id="icform">
     <div class="col-sm-4">
         <label for="partition">Select IC Partition</label>
-        <select id="partition" class="form-control" name="req_partition">
-            <option value="usatlas+pq302951">USAtlas</option>
-            <option value="debug+default">Debug</option>
+        <select id="partition" class="form-control" name="req_partition" onchange="pickdefcont()">
+            {% for pair, name, _ in partitions %}
+            <option value="{{ pair }}">{{ name }}</option>
+            {% endfor %}
         </select>
     </div>
     <div class="col-sm-2">
         <label for="gpus">Num GPUs</label>
         <input type="number" class="form-control" max=2 min=0 value="1" id="gpus" name="req_ngpus"/>
     </div>
-    <div class="col-sm-3">
-        <label for="runtime">Max Runtime (min)</label>
+    <div class="col-sm-2">
+        <label for="runtime">Runtime (min)</label>
         <input type="number" class="form-control" max=960 min=30 step=30 value="120" id="runtime" name="req_runtime"/>
+    </div>
+    <div class="col-sm-4">
+        <label for="runtime">Container Image</label>
+        <select class="form-control" id="container" name="req_scontainer"/>
+            {% for category, containers in containermap.items() %}
+            <optgroup label="{{ category }}">
+                {% for name, path in containers %}
+                <option value="{{ path }}">{{ name }}</option>
+                {% endfor %}
+            </optgroup>
+            {% endfor %}
+        <select/>
     </div>
 </fieldset>
 </div>
@@ -41,4 +54,14 @@ function disableicform() {
     upperform.disabled = false;
   }
 }
+
+function pickdefcont() {
+  var box = document.getElementById('partition');
+  var container = document.getElementById('container');
+  var mapping = {{ partitions|tojson }};
+
+  container.value = mapping.find(x => x[0] == box.value)[2];
+}
+
+pickdefcont();
 </script>
