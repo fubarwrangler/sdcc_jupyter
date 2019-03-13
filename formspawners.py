@@ -46,7 +46,6 @@ class FormMixin(HasTraits):
         return self.form_cls().generate()
 
     def options_from_form(self, formdata):
-        self.log.warning("GENREATING FORM: %s", formdata)
         return self.form_cls().massage_options(formdata)
 
 
