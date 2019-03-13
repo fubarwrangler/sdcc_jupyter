@@ -14,7 +14,7 @@ class SDCCLogout(BaseHandler):
             self.log.info("User logged out: %s", user.name)
             self.clear_login_cookie()
             self.statsd.incr('logout')
-        self.redirect('/', permanent=False)
+        self.redirect(self.authenticator.logout_destination, permanent=False)
 
 
 class SDCCAuthenticator(RemoteUserAuthenticator):

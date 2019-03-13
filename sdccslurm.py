@@ -8,7 +8,7 @@ from .formspawners import ParamForm, FormMixin, WrapFormSpawner
 
 
 class SDCCSlurmSpawner(SlurmSpawner):
-    req_jhubpath = Unicode('/u0b/software/anaconda3/bin')
+    req_jhubpath = Unicode('/u0b/software/jupyter/virtenvs/jhub_hostenv/bin')
     req_runtime = Unicode('30:00')
     req_scontainer = Unicode('')
     batch_script = '''#!/bin/sh
