@@ -14,6 +14,8 @@ class SDCCLogout(BaseHandler):
         if user:
             self.log.info("User logged out: %s", user.name)
             self.clear_login_cookie()
+            if self.get_cookie('ROUTEID'):
+                self.clear_cookie('ROUTEID')
             self.statsd.incr('logout')
         self.log.debug("Logout complete, redirect to: %s",
                        self.authenticator.logout_destination)
