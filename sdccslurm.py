@@ -44,6 +44,8 @@ unset XDG_RUNTIME_DIR
 # Inherit from the class you want to use the form from...
 class CFNSpawn(WrapFormSpawner, SDCCSlurmSpawner):
 
+    form_cls = CFNForm
+
     def set_class(self, data):
         if 'local' in data:
             self.log.info("Choosing local spawner... %s", data)
@@ -51,5 +53,5 @@ class CFNSpawn(WrapFormSpawner, SDCCSlurmSpawner):
         else:
             self.log.info("Choosing SLURM spawner...")
             x = SDCCSlurmSpawner
-            x.form_cls = CFNForm
-            return SDCCSlurmSpawner
+            x.form_cls = self.form_cls
+            return x
