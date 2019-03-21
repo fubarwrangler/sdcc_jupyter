@@ -1,5 +1,6 @@
 from wrapspawner import WrapSpawner
 from traitlets import Unicode, Type
+from tornado.log import app_log
 
 import os
 
@@ -18,7 +19,7 @@ class ParamForm(HasTraits):
         Subclass as needed to include your own methods
     """
 
-    source = Unicode()
+    source = Unicode('')
 
     def generate(self):
         path = os.path.join(os.path.dirname(__file__), self.source)
@@ -42,7 +43,6 @@ class FormMixin(HasTraits):
 
     @staticmethod
     def options_form(self):
-        self.log.debug(self.form_cls)
         return self.form_cls().generate()
 
     def options_from_form(self, formdata):
@@ -58,9 +58,15 @@ class WrapFormSpawner(FormMixin, WrapSpawner):
 
     def options_from_form(self, formdata):
         self.child_class = self.set_class(formdata)
+        self.child_class.formdata = formdata
         if hasattr(self.child_class, 'form_cls'):
+            self.log.debug("WrapForm: Set child config from child class's form_cls: %s",
+                           self.child_class.form_cls)
             self.child_config = self.child_class.form_cls().massage_options(formdata)
-        self.log.debug("My child config: %s", self.child_config)
+        else:
+            self.log.debug("No child config found")
+            self.child_config = {}
+        self.log.info("Spawner child-config: %s", self.child_config)
         return {}
 
     def set_class(self, data):
