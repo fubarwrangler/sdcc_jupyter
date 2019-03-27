@@ -4,7 +4,7 @@ from batchspawner import SlurmSpawner
 from jupyterhub.spawner import LocalProcessSpawner
 
 from .formspawners import FormMixin, WrapFormSpawner
-from .forms import CFNForm
+from .forms import CFNForm, ICForm
 
 
 class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
@@ -44,7 +44,7 @@ unset XDG_RUNTIME_DIR
 # Inherit from the class you want to use the form from...
 class CFNSpawn(WrapFormSpawner, SDCCSlurmSpawner):
 
-    form_cls = CFNForm
+    form_cls = ICForm
 
     def set_class(self, data):
         if 'local' in data:

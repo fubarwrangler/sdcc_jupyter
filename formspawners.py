@@ -1,6 +1,5 @@
 from wrapspawner import WrapSpawner
 from traitlets import Unicode, Type
-from tornado.log import app_log
 
 import os
 
