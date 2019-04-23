@@ -11,8 +11,8 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
 
     req_jhubpath = Unicode('/u0b/software/jupyter/virtenvs/jhub_hostenv/bin')
     req_runtime = Unicode('30:00')
+    req_gputype = Unicode('')
     req_scontainer = Unicode('')
-    cmd = ['/u0b/software/images/container_run.sh']
 
     @property
     def batch_script(self):
@@ -25,6 +25,8 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
             base += [('mem', '{memory}G')]
         if 'req_ngpus' in self.formdata:
             base += [('gres', 'gpu:{ngpus}')]
+        if 'req_gputype' in self.formdata:
+            base += [('constraint', '{gputype}')]
         prescript = '\n'.join('#SBATCH --{key}={value}'.format(
                                 key=x[0], value=x[1]) for x in base)
         return '#!/bin/sh\n' + prescript + '''
@@ -42,9 +44,7 @@ unset XDG_RUNTIME_DIR
 
 
 # Inherit from the class you want to use the form from...
-class CFNSpawn(WrapFormSpawner, SDCCSlurmSpawner):
-
-    form_cls = ICForm
+class SDCCSpawn(WrapFormSpawner, SDCCSlurmSpawner):
 
     def set_class(self, data):
         if 'local' in data:

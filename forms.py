@@ -20,6 +20,35 @@ class CFNForm(ParamForm):
         return Template(super().generate()).render()
 
 
+
+class KNLForm(ParamForm):
+
+    source = 'static/knl.html'
+
+    def massage_options(self, formdata):
+        data = super().massage_options(formdata)
+        data['req_runtime'] = '%d:00' % int(data['req_runtime'])
+        return data
+
+    def generate(self):
+        app_log.info("Generating form from: %s", self)
+        return Template(super().generate()).render()
+
+
+class SDCCForm(ParamForm):
+
+    source = 'static/sdcc.html'
+
+    def massage_options(self, formdata):
+        data = super().massage_options(formdata)
+        data['req_runtime'] = '%d:00' % int(data['req_runtime'])
+        return data
+
+    def generate(self):
+        app_log.info("Generating form from: %s", self)
+        return Template(super().generate()).render()
+
+
 class ICForm(ParamForm):
 
     source = 'static/ic.html'
