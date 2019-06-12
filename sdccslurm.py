@@ -26,6 +26,8 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
             base += [('gres', 'gpu:{ngpus}')]
         if 'req_gputype' in self.formdata:
             base += [('constraint', '{gputype}')]
+        if 'req_qos' in self.formdata:
+            base += [('qos', '{qos}')]
         prescript = '\n'.join('#SBATCH --{key}={value}'.format(
                                 key=x[0], value=x[1]) for x in base)
         return '#!/bin/sh\n' + prescript + '''

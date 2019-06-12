@@ -5,32 +5,27 @@ or select to run locally on the submit node.
 </p>
 <fieldset id="icform">
 <div class="form-group row">
-    <div class="col-sm-4">
-        <label for="partition">Select IC Partition</label>
-        <select id="partition" class="form-control" name="req_partition" onchange="">
+    <div class="col-sm-3">
+        <label for="partition">Select Partition</label>
+        <select id="partition" class="form-control" name="req_partition" onchange="updatedPartition()">
             {% for name, _ in partitions %}
             <option value="{{ name }}">{{ name }}</option>
             {% endfor %}
         </select>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <label for="account">Select Account</label>
-        <select id="account" class="form-control" name="req_account" onchange="">
-            {% for name in accounts  %}
-            <option value="{{ name }}">{{ name }}</option>
-            {% endfor %}
+        <select id="account" class="form-control" name="req_account" onchange="updatedAccount()">
+
         </select>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-2">
         <label for="qos">Select QOS</label>
         <select id="qos" class="form-control" name="req_qos" onchange="">
-            {% for name in qos %}
-            <option value="{{ name }}">{{ name }}</option>
-            {% endfor %}
         </select>
     </div>
-</div>
-<div class="form-group row">
+<!-- </div> -->
+<!-- <div class="form-group row"> -->
     <div class="col-sm-2">
         <label for="gpus">Num GPUs</label>
         <input type="number" class="form-control" max=2 min=0 value="1" id="gpus" name="req_ngpus"/>
@@ -61,6 +56,46 @@ function disableicform() {
   }
 }
 
+// [ [partition, account, qos, time], ..., ...]
+var slurmdata = {{ slurm|tojson }};
+var partdata = {{ partitions|tojson }};
+
+var pselect = document.getElementById('partition');
+var aselect = document.getElementById('account');
+var qselect = document.getElementById('qos');
+var timebox = document.getElementById('runtime');
+
+function replaceSelect(selector, values)    {
+    while (selector.options.length > 0) {
+        selector.remove(0);
+    }
+    for(const v of values)  {
+        selector.add(new Option(v, v));
+    }
+}
+
+
+function updatedPartition() {
+    var partition = pselect.options[pselect.selectedIndex].value;
+    var accounts = new Set(slurmdata.filter(x => x[0] == partition).map(x => x[1]));
+    var newtime = partdata.filter(x => x[0] == partition).map(x => x[1])[0];
+    replaceSelect(aselect, accounts);
+
+    if(timebox.value > newtime) {
+        timebox.value = newtime;
+    }
+    timebox.max = newtime;
+
+    updatedAccount();
+
+}
+
+function updatedAccount() {
+    var account = aselect.options[aselect.selectedIndex].value;
+    var qos = new Set(slurmdata.filter(x => x[1] == account).map(x => x[2]));
+    replaceSelect(qselect, qos);
+}
+updatedPartition();
 
 
 </script>

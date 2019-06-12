@@ -80,14 +80,27 @@ class ICForm(ParamForm):
     ORDER BY partition, partitions.qos, qos.account;
     '''
 
+    @staticmethod
+    def slurm_time_to_min(timestr):
+        # Strings look like '1-12:30:00' for 1 day 12 1/2 hours
+        s_m_hd = timestr.split(':')
+        days, hours, min, sec = [0] * 4
+
+        if len(s_m_hd) > 2:
+            hd = s_m_hd.pop(0)
+            if '-' in hd:
+                days, hours = map(int, hd.split('-'))
+            else:
+                hours = int(hd)
+        if len(s_m_hd) > 1:
+            min = int(s_m_hd.pop(0))
+        return days * 24 * 60 + hours * 60 + min
+
     def massage_options(self, formdata):
         data = super().massage_options(formdata)
         intify = {'req_memory', 'req_ngpus'}
         data = {k: int(v) if v in intify else v for k, v in data.items()}
         app_log.debug(data)
-        partition, account = data['req_partition'].split('+')
-        data['req_partition'] = partition
-        data['req_account'] = account
         data['req_runtime'] = '%d:00' % int(data['req_runtime'])
         return data
 
@@ -95,13 +108,20 @@ class ICForm(ParamForm):
         db = sqlite3.connect('/var/tmp/slurm_accounts.db')
         cur = db.cursor()
         cur.execute(self.query, [self.spawner.user.name])
+        # cur.execute(self.query, ['willsk'])
 
         # Tuples of : (partition, account, qos, timelimit), ...
-        slurm_params = cur.fetchall()
+        slurm_params = list()
+        for row in map(list, cur.fetchall()):
+            # Convert to minutes
+            row[3] = self.slurm_time_to_min(row[3])
+            row[3] -= row[3] % 30
+            slurm_params.append(row)
+
         vars = {
-            'partitions': {(x[0], x[3]) for x in slurm_params},
-            'accounts': {x[1] for x in slurm_params},
-            'qos': {x[2] for x in slurm_params},
+            'partitions': list(sorted({(x[0], x[3]) for x in slurm_params})),
+            'accounts': list(sorted({x[1] for x in slurm_params})),
+            'qos': list(sorted({x[2] for x in slurm_params})),
             'slurm': slurm_params,
         }
         db.close()
