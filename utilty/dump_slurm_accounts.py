@@ -1,4 +1,6 @@
 #!/usr/bin/env python2
+# Run this script as a cronjob every night or so to dump to a local SQLite DB
+# the slurm user->account->qos->partition mapping for spawner form
 
 import subprocess
 import sqlite3

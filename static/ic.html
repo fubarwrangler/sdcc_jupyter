@@ -3,16 +3,34 @@
 Please choose your parameters to run on a node with a GPU
 or select to run locally on the submit node.
 </p>
-<div class="form-group row">
 <fieldset id="icform">
+<div class="form-group row">
     <div class="col-sm-4">
         <label for="partition">Select IC Partition</label>
-        <select id="partition" class="form-control" name="req_partition" onchange="pickdefcont()">
-            {% for pair, name, _ in partitions %}
-            <option value="{{ pair }}">{{ name }}</option>
+        <select id="partition" class="form-control" name="req_partition" onchange="">
+            {% for name, _ in partitions %}
+            <option value="{{ name }}">{{ name }}</option>
             {% endfor %}
         </select>
     </div>
+    <div class="col-sm-4">
+        <label for="account">Select Account</label>
+        <select id="account" class="form-control" name="req_account" onchange="">
+            {% for name in accounts  %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-sm-4">
+        <label for="qos">Select QOS</label>
+        <select id="qos" class="form-control" name="req_qos" onchange="">
+            {% for name in qos %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="form-group row">
     <div class="col-sm-2">
         <label for="gpus">Num GPUs</label>
         <input type="number" class="form-control" max=2 min=0 value="1" id="gpus" name="req_ngpus"/>
@@ -21,20 +39,8 @@ or select to run locally on the submit node.
         <label for="runtime">Runtime (min)</label>
         <input type="number" class="form-control" max=960 min=30 step=30 value="120" id="runtime" name="req_runtime"/>
     </div>
-    <div class="col-sm-4">
-        <label for="runtime">Container Image</label>
-        <select class="form-control" id="container" name="req_scontainer"/>
-            {% for category, containers in containermap.items() %}
-            <optgroup label="{{ category }}">
-                {% for name, path in containers %}
-                <option value="{{ path }}">{{ name }}</option>
-                {% endfor %}
-            </optgroup>
-            {% endfor %}
-        <select/>
-    </div>
-</fieldset>
 </div>
+</fieldset>
 <h2 class="text-center">~ or ~</h2>
 <div class="form-group row">
     <div class="col-sm-3 checkbox">
@@ -55,13 +61,6 @@ function disableicform() {
   }
 }
 
-function pickdefcont() {
-  var box = document.getElementById('partition');
-  var container = document.getElementById('container');
-  var mapping = {{ partitions|tojson }};
 
-  container.value = mapping.find(x => x[0] == box.value)[2];
-}
 
-pickdefcont();
 </script>
