@@ -4,7 +4,6 @@ from batchspawner import SlurmSpawner
 from jupyterhub.spawner import LocalProcessSpawner
 
 from .formspawners import FormMixin, WrapFormSpawner
-from .forms import CFNForm, ICForm
 
 
 class SDCCSlurmSpawner(FormMixin, SlurmSpawner):

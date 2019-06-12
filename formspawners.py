@@ -20,6 +20,9 @@ class ParamForm(HasTraits):
 
     source = Unicode('')
 
+    def __init__(self, spawner):
+        self.spawner = spawner
+
     def generate(self):
         path = os.path.join(os.path.dirname(__file__), self.source)
         with open(path) as f:
@@ -42,10 +45,10 @@ class FormMixin(HasTraits):
 
     @staticmethod
     def options_form(self):
-        return self.form_cls().generate()
+        return self.form_cls(self).generate()
 
     def options_from_form(self, formdata):
-        return self.form_cls().massage_options(formdata)
+        return self.form_cls(self).massage_options(formdata)
 
 
 class WrapFormSpawner(FormMixin, WrapSpawner):
@@ -61,7 +64,7 @@ class WrapFormSpawner(FormMixin, WrapSpawner):
         if hasattr(self.child_class, 'form_cls'):
             self.log.debug("WrapForm: Set child config from child class's form_cls: %s",
                            self.child_class.form_cls)
-            self.child_config = self.child_class.form_cls().massage_options(formdata)
+            self.child_config = self.child_class.form_cls(self).massage_options(formdata)
         else:
             self.log.debug("No child config found")
             self.child_config = {}
