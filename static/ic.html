@@ -45,6 +45,13 @@ or select to run locally on the submit node.
         </label>
     </div>
 </div>
+<style>
+.disabled {
+    pointer-events: none;
+    background: lightgrey;
+    /* cursor: not-allowed; */
+}
+</style>
 <script type="text/javascript">
 function disableicform() {
   var checkbox = document.getElementById("local");
@@ -65,9 +72,10 @@ var aselect = document.getElementById('account');
 var qselect = document.getElementById('qos');
 var timebox = document.getElementById('runtime');
 
+
 function replaceSelect(selector, values)    {
     var n = 0;
-    selector.disabled = false;
+    selector.classList.remove("disabled");
     while (selector.options.length > 0) {
         selector.remove(0);
     }
@@ -76,7 +84,7 @@ function replaceSelect(selector, values)    {
         selector.add(new Option(v, v));
     }
     if (n <= 1) {
-        selector.disabled = true;
+        selector.classList.add("disabled");
     }
 }
 
