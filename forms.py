@@ -54,30 +54,11 @@ class ICForm(ParamForm):
 
     source = 'static/ic.html'
 
-    # # Category: list[ (Name, path), (name2, path2)... ]
-    # containers = {
-    #     'Native': [('Native', '')],
-    #     'Generic': [
-    #         ('SL7.3', '/u0b/software/images/generic-SL7.simg'),
-    #         ('SL6.4', '/u0b/software/images/generic-SL6.simg'),
-    #     ],
-    #     'USATLAS': [
-    #         ('Doug\'s Container', '/u0b/software/images/generic-SL7.simg'),
-    #     ],
-    # }
-    #
-    # # Partition+account, display-name, container-image-path
-    # partitions = (
-    #     ["usatlas+pq302951", 'USAtlas', '/u0b/software/images/generic-SL7.simg'],
-    #     ['debug+default', 'Debug', ''],
-    # )
-
     query = '''
-    SELECT DISTINCT partitions.partition, qos.*, time FROM users
-        JOIN qos ON qos.account=users.account
-        JOIN partitions ON qos.qos=partitions.qos
+    SELECT DISTINCT partitions.partition, users.account, users.qos, time FROM users
+        JOIN partitions ON users.qos=partitions.qos
     WHERE username=?
-    ORDER BY partition, partitions.qos, qos.account;
+    ORDER BY partition, partitions.qos, users.account;
     '''
 
     @staticmethod
@@ -108,7 +89,6 @@ class ICForm(ParamForm):
         db = sqlite3.connect('/var/tmp/slurm_accounts.db')
         cur = db.cursor()
         cur.execute(self.query, [self.spawner.user.name])
-        # cur.execute(self.query, ['willsk'])
 
         # Tuples of : (partition, account, qos, timelimit), ...
         slurm_params = list()
@@ -120,8 +100,6 @@ class ICForm(ParamForm):
 
         vars = {
             'partitions': list(sorted({(x[0], x[3]) for x in slurm_params})),
-            'accounts': list(sorted({x[1] for x in slurm_params})),
-            'qos': list(sorted({x[2] for x in slurm_params})),
             'slurm': slurm_params,
         }
         db.close()

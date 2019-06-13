@@ -66,11 +66,17 @@ var qselect = document.getElementById('qos');
 var timebox = document.getElementById('runtime');
 
 function replaceSelect(selector, values)    {
+    var n = 0;
+    selector.disabled = false;
     while (selector.options.length > 0) {
         selector.remove(0);
     }
     for(const v of values)  {
+        n+=1;
         selector.add(new Option(v, v));
+    }
+    if (n <= 1) {
+        selector.disabled = true;
     }
 }
 

@@ -36,29 +36,28 @@ for pair in (x.strip().split() for x in open('/etc/slurm/slurm.conf')):
 
 db = sqlite3.connect(DBFILE)
 cur = db.cursor()
-cur.execute("""CREATE TABLE IF NOT EXISTS users (
+cur.executescript("""
+CREATE TABLE IF NOT EXISTS users (
     username text,
     account text,
-    PRIMARY KEY (username, account)
-)""")
-cur.execute("""CREATE TABLE IF NOT EXISTS partitions (
+    qos text,
+    PRIMARY KEY (username, account, qos)
+);
+CREATE TABLE IF NOT EXISTS partitions (
     partition text,
     time text,
     qos text
-)""")
-cur.execute("""CREATE TABLE IF NOT EXISTS qos (
-    account text,
-    qos text
-)""")
-
+);
+CREATE INDEX IF NOT EXISTS idx_part_qos ON partitions (qos);
+CREATE INDEX IF NOT EXISTS idx_user_qos ON users (qos);
+""")
 cur.execute('DELETE FROM users')
-cur.executemany('INSERT INTO users VALUES (?,?)',
-                ((user, qos) for user in users for qos in users[user]))
+cur.executemany('INSERT INTO users VALUES (?,?,?)',
+                ((user, acct, qos) for user in users
+                    for acct in users[user]
+                    for qos in users[user][acct]))
 cur.execute('DELETE FROM partitions')
 cur.executemany('INSERT INTO partitions VALUES (?,?,?)',
                 ((p, partitions[p][0], q) for p in partitions for q in partitions[p][1]))
-acct_qos_map = {k: v for d in users.values() for k, v in d.items()}
-cur.executemany('INSERT INTO qos VALUES (?,?)',
-                ((a, q) for a in acct_qos_map for q in acct_qos_map[a]))
 db.commit()
 db.close()
