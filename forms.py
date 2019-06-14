@@ -53,6 +53,7 @@ class SDCCForm(ParamForm):
 class ICForm(ParamForm):
 
     source = 'static/ic.html'
+    db_path = '/var/tmp/slurm_accounts.db'
 
     query = '''
     SELECT DISTINCT partitions.partition, users.account, users.qos, time FROM users
@@ -86,7 +87,7 @@ class ICForm(ParamForm):
         return data
 
     def generate(self):
-        db = sqlite3.connect('/var/tmp/slurm_accounts.db')
+        db = sqlite3.connect(self.db_path)
         cur = db.cursor()
         cur.execute(self.query, [self.spawner.user.name])
 

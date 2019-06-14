@@ -1,9 +1,10 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # Run this script as a cronjob every night or so to dump to a local SQLite DB
 # the slurm user->account->qos->partition mapping for spawner form
 
 import subprocess
 import sqlite3
+import sys
 
 sacct_cmd = ['sacctmgr', 'show', 'associations',
              '-n', '-P', 'format=User,Qos,Account']
@@ -12,7 +13,9 @@ users = {}
 
 DBFILE = '/var/tmp/slurm_accounts.db'
 
-for line in subprocess.check_output(sacct_cmd).split('\n'):
+kw = {} if sys.version_info[0] < 3 else {'encoding': 'utf8'}
+
+for line in subprocess.check_output(sacct_cmd, **kw).split('\n'):
     # Skip lines that aren't regular users
     if line.startswith("|") or len(line) == 0:
         continue
