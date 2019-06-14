@@ -1,4 +1,5 @@
 from traitlets import Unicode
+from tornado.log import app_log
 
 from batchspawner import SlurmSpawner
 from jupyterhub.spawner import LocalProcessSpawner
@@ -15,18 +16,19 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
 
     @property
     def batch_script(self):
-        self.log.info("My script Options: %s", self.formdata)
+        # self.log.info("My form Options: %s", self.user_)
+        self.log.info("My Actual Options: %s", self.user_options)
         base = [('partition', '{partition}'), ('account', '{account}'),
                 ('time', '{runtime}')]
-        if 'req_cpus' in self.formdata:
+        if 'req_cpus' in self.user_options:
             base += [('cpus-per-task', '{nprocs}')]
-        if 'req_memory' in self.formdata:
+        if 'req_memory' in self.user_options:
             base += [('mem', '{memory}G')]
-        if 'req_ngpus' in self.formdata:
+        if 'req_ngpus' in self.user_options:
             base += [('gres', 'gpu:{ngpus}')]
-        if 'req_gputype' in self.formdata:
+        if 'req_gputype' in self.user_options:
             base += [('constraint', '{gputype}')]
-        if 'req_qos' in self.formdata:
+        if 'req_qos' in self.user_options:
             base += [('qos', '{qos}')]
         prescript = '\n'.join('#SBATCH --{key}={value}'.format(
                                 key=x[0], value=x[1]) for x in base)
@@ -48,6 +50,7 @@ unset XDG_RUNTIME_DIR
 class SDCCSpawn(WrapFormSpawner, SDCCSlurmSpawner):
 
     def set_class(self, data):
+        app_log.debug("Choose class data: %s", data)
         if 'local' in data:
             self.log.info("Choosing local spawner... %s", data)
             return LocalProcessSpawner

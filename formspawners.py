@@ -65,6 +65,7 @@ class WrapFormSpawner(FormMixin, WrapSpawner):
             self.log.debug("WrapForm: Set child config from child class's form_cls: %s",
                            self.child_class.form_cls)
             self.child_config = self.child_class.form_cls(self).massage_options(formdata)
+            self.child_class.user_options = self.child_config
         else:
             self.log.debug("No child config found")
             self.child_config = {}

@@ -21,15 +21,19 @@ or select to run locally on the submit node.
         </select>
     </div>
     <div class="col-sm-2">
-        <label for="qos">Select QOS</label>
+        <label for="qos">QOS</label>
         <select id="qos" class="form-control" name="req_qos" onchange="">
         </select>
     </div>
 <!-- </div> -->
 <!-- <div class="form-group row"> -->
     <div class="col-sm-2">
-        <label for="gpus">Num GPUs</label>
-        <input type="number" class="form-control" max=2 min=0 value="1" id="gpus" name="req_ngpus"/>
+        <label for="account">GPU</label>
+        <select class="form-control" id="container" name="req_gputype"/>
+          <option value="">any</option>
+          <option value="pascal">Pascal</option>
+          <option value="tesla">Tesla</option>
+        <select/>
     </div>
     <div class="col-sm-2">
         <label for="runtime">Runtime (min)</label>

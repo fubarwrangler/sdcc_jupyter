@@ -80,9 +80,15 @@ class ICForm(ParamForm):
 
     def massage_options(self, formdata):
         data = super().massage_options(formdata)
-        intify = {'req_memory', 'req_ngpus'}
+        intify = {'req_memory'}
         data = {k: int(v) if v in intify else v for k, v in data.items()}
-        app_log.debug(data)
+        if data['req_gputype'] == "tesla":
+            data['req_ngpus'] = '4'
+        elif data['req_gputype'] == "pascal":
+            data['req_ngpus'] = '2'
+        else:
+            data.pop('req_gputype')
+            data['req_ngpus'] = '1'
         data['req_runtime'] = '%d:00' % int(data['req_runtime'])
         return data
 
@@ -104,6 +110,5 @@ class ICForm(ParamForm):
             'slurm': slurm_params,
         }
         db.close()
-        app_log.info(vars)
 
         return Template(super().generate()).render(**vars)
