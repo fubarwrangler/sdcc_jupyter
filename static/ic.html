@@ -3,6 +3,7 @@
 Please choose your parameters to run on a node with a GPU
 or select to run locally on the submit node.
 </p>
+{% if partitions|length > 0 -%}
 <fieldset id="icform">
 <div class="form-group row">
     <div class="col-sm-3">
@@ -36,6 +37,7 @@ or select to run locally on the submit node.
     </div>
 </div>
 </fieldset>
+
 <h2 class="text-center">~ or ~</h2>
 <div class="form-group row">
     <div class="col-sm-3 checkbox">
@@ -45,6 +47,14 @@ or select to run locally on the submit node.
         </label>
     </div>
 </div>
+{% else -%}
+<div class="form-group row warning">
+    <input name="local" hidden=true value="true"/>
+    <p class="col-sm-12 text-danger bg-warning"> WARNING: You are not in any SLURM
+        partitions, please request membership via RT, you can only spawn locally!
+    </p>
+</div>
+{% endif -%}
 <style>
 .disabled {
     pointer-events: none;
@@ -65,6 +75,8 @@ function disableicform() {
 
 // [ [partition, account, qos, time], ..., ...]
 var slurmdata = {{ slurm|tojson }};
+
+// [ [partition, time], ...]
 var partdata = {{ partitions|tojson }};
 
 var pselect = document.getElementById('partition');
@@ -97,6 +109,8 @@ function updatedPartition() {
 
     if(timebox.value > newtime) {
         timebox.value = newtime;
+    } else if (timebox.value < newtime / 2) {
+        timebox.value = newtime / 2;
     }
     timebox.max = newtime;
 
