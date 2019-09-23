@@ -42,6 +42,7 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
 export PATH="{jhubpath}:$PATH"
 export SCONTAINER="{scontainer}"
 unset XDG_RUNTIME_DIR
+module load cuda/9.0
 {cmd}
 '''
 
