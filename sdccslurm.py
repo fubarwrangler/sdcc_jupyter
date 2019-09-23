@@ -35,7 +35,7 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
         return '#!/bin/sh\n' + prescript + '''
 #SBATCH --output={homedir}/jupyterhub_slurmspawner_%j.log
 #SBATCH --job-name=spawner-jupyterhub
-#SBATCH --workdir={homedir}
+#SBATCH --chdir={homedir}
 #SBATCH --export={keepvars}
 #SBATCH --get-user-env=L
 #SBATCH {options}
