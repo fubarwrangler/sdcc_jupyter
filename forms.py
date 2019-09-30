@@ -22,6 +22,15 @@ class CFNForm(ParamForm):
         return Template(super().generate()).render()
 
 
+class NSLSForm(ParamForm):
+    source = 'static/nsls.html'
+
+    def generate(self):
+        app_log.info("Generating form from: %s", self)
+        return Template(super().generate()).render()
+
+   
+
 class KNLForm(ParamForm):
 
     source = 'static/knl.html'
