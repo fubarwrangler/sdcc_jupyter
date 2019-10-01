@@ -29,7 +29,6 @@ class NSLSForm(ParamForm):
         app_log.info("Generating form from: %s", self)
         return Template(super().generate()).render()
 
-   
 
 class KNLForm(ParamForm):
 
