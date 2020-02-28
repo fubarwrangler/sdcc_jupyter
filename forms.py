@@ -98,7 +98,7 @@ class ICForm(ParamForm):
             data.pop('req_gputype')
             data['req_ngpus'] = '1'
         data['req_runtime'] = '%d:00' % int(data['req_runtime'])
-        return data
+        return {k[4:]: v for k, v in data.items()}
 
     def generate(self):
         db = sqlite3.connect(self.db_path)

@@ -9,8 +9,8 @@ class SDCCLogout(BaseHandler):
         we are a load-balanced backend.
     """
 
-    def get(self):
-        user = self.get_current_user()
+    async def get(self):
+        user = await self.get_current_user()
         if user:
             self.log.info("User logged out: %s", user.name)
             self.clear_login_cookie()
