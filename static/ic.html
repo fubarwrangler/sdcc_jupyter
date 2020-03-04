@@ -40,6 +40,17 @@ or select to run locally on the submit node.
         <input type="number" class="form-control" max=960 min=30 step=30 value="120" id="runtime" name="req_runtime"/>
     </div>
 </div>
+<div class="form-group row">
+  <div class=col-sm-5">
+    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#hideextrafields" aria-expanded="false" aria-controls="hideextrafields">
+       +
+    </button>
+    <div class="collapse" id="hideextrafields">
+      <label for="extraopts">Extra SBATCH options</label>
+      <textarea id="extraopts" class="form-control" name="req_extraopts"></textarea>
+    </div>
+  </div>
+</div>
 </fieldset>
 
 <h2 class="text-center">~ or ~</h2>

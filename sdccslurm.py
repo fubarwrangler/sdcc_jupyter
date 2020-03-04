@@ -44,6 +44,8 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
         if 'qos' in self.user_options:
             base += [('qos', '{qos}')]
         self.check_path_override(self.user_options.get('account'))
+        extras = '\n'.join(['#SBATCH %s' % x for x in
+                            self.user_options['extraopts'].split('\n')])
 
         prescript = '\n'.join('#SBATCH --{key}={value}'.format(
                                 key=x[0], value=x[1]) for x in base)
@@ -53,7 +55,7 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
 #SBATCH --chdir={homedir}
 #SBATCH --export={keepvars}
 #SBATCH --get-user-env=L
-#SBATCH {options}
+''' + extras + '''
 export PATH="{jhubpath}:$PATH"
 export SCONTAINER="{scontainer}"
 export JUPYTER_PATH="''' + self.req_kpath + '''"
