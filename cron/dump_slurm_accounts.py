@@ -47,7 +47,6 @@ for line in subprocess.check_output(sacct_qos_cmd, **kw).split('\n'):
         qos_part_time[name[5:]] = time
 
 db = sqlite3.connect(DBFILE)
-db.set_trace_callback(print)
 cur = db.cursor()
 cur.executescript("""
 CREATE TABLE IF NOT EXISTS users (
