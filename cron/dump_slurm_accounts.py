@@ -13,7 +13,7 @@ sacct_qos_cmd = ['sacctmgr', 'show', 'qos', '-n', '-P', 'format=Name,MaxWall']
 # user -> account -> qos
 users = {}
 
-DBFILE = '/tmp/XXslurm_accounts.db'
+DBFILE = '/var/tmp/slurm_accounts.db'
 
 kw = {} if sys.version_info[0] < 3 else {'encoding': 'utf8'}
 
