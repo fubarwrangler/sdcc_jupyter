@@ -5,6 +5,8 @@ from .formspawners import ParamForm
 
 import sqlite3
 
+__all__ = ['CFNForm', 'NSLSForm', 'KNLForm', 'SDCCForm', 'ICForm']
+
 
 class CFNForm(ParamForm):
 
