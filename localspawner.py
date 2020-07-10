@@ -26,7 +26,7 @@ def override_path(username, cfgpath="conf/pathoverride.cfg"):
     jupyter_path = list()
 
     with open(cfgpath) as fp:
-        for regex, jp in (x.split() for x in fp if not x.startswith('#')):
+        for regex, jp in (x.split() for x in fp if not x.startswith('#') and len(x) > 3):
             if re.match(regex, group):
                 append, paths = parse_pathlist(jp)
                 if append:
