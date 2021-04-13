@@ -1,0 +1,4 @@
+wrapspawner
+batchspawner
+jupyterhub
+jhub_remote_user_authenticator

@@ -3,3 +3,4 @@ jupyterhub.sqlite
 jupyterhub_cookie_secret
 jupyterhub-proxy.pid
 __pycache__
+*.egg-info
