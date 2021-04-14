@@ -63,18 +63,3 @@ unset XDG_RUNTIME_DIR
 module load cuda/9.0
 {cmd}
 '''
-
-
-# Inherit from the class you want to use the form from...
-class SDCCSpawn(WrapFormSpawner, SDCCSlurmSpawner):
-
-    def set_class(self, data):
-        app_log.debug("Choose class data: %s", data)
-        if 'local' in data:
-            self.log.info("Choosing local spawner... %s", data)
-            return LocalProcessSpawner
-        else:
-            self.log.info("Choosing SLURM spawner...")
-            x = SDCCSlurmSpawner
-            x.form_cls = self.form_cls
-            return x

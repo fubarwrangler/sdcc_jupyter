@@ -1,13 +1,12 @@
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 from traitlets import Unicode
-# from tornado.log import app_log
 
 from batchspawner import CondorSpawner
 
-from .formspawners import FormMixin  # , WrapFormSpawner
+from .formspawners import FormMixin
 
 
-class NSLSSpawner(FormMixin, CondorSpawner):
+class SDCCCondorSpawner(FormMixin, CondorSpawner):
 
     # Maybe allow singularity-image selection logic some day too?
     req_scontainer = Unicode('')

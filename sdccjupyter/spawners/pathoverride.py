@@ -1,10 +1,10 @@
+
 import os
 import re
 import grp
 import pwd
 
 from tornado.log import app_log
-from jupyterhub.spawner import LocalProcessSpawner
 
 
 def primary_group(user):
@@ -36,11 +36,11 @@ def override_path(username, cfgpath="conf/pathoverride.cfg"):
     return jupyter_path
 
 
-class LocalPathOverrideSpawner(LocalProcessSpawner):
+class PathOverrideMixin:
     def get_env(self):
         """Get the complete set of environment variables to be set in the spawned process """
 
         env = super().get_env()
         env['JUPYTER_PATH'] = ":".join(override_path(self.user.name))
-        app_log.info("Path set to %s", env['JUPYTER_PATH'])
+        app_log.info("Path override: set JUPYTER_PATH to %s", env['JUPYTER_PATH'])
         return env
