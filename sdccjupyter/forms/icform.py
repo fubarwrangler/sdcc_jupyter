@@ -1,63 +1,9 @@
 from jinja2 import Template
 from tornado.log import app_log
 
-from .formspawners import ParamForm
+from ..formspawners import ParamForm
 
 import sqlite3
-
-__all__ = ['CFNForm', 'NSLSForm', 'KNLForm', 'SDCCForm', 'ICForm']
-
-
-class CFNForm(ParamForm):
-
-    source = 'static/cfn.html'
-
-    def massage_options(self, formdata):
-        data = super().massage_options(formdata)
-        intify = {'req_memory', 'req_nprocs'}
-        data = {k: int(v) if v in intify else v for k, v in data.items()}
-        data['req_runtime'] = '%d:00' % int(data['req_runtime'])
-        return data
-
-    def generate(self):
-        app_log.info("Generating form from: %s", self)
-        return Template(super().generate()).render()
-
-
-class NSLSForm(ParamForm):
-    source = 'static/nsls.html'
-
-    def generate(self):
-        app_log.info("Generating form from: %s", self)
-        return Template(super().generate()).render()
-
-
-class KNLForm(ParamForm):
-
-    source = 'static/knl.html'
-
-    def massage_options(self, formdata):
-        data = super().massage_options(formdata)
-        data['req_runtime'] = '%d:00' % int(data['req_runtime'])
-        return data
-
-    def generate(self):
-        app_log.info("Generating form from: %s", self)
-        return Template(super().generate()).render()
-
-
-class SDCCForm(ParamForm):
-
-    source = 'static/sdcc.html'
-
-    def massage_options(self, formdata):
-        data = super().massage_options(formdata)
-        data['req_runtime'] = '%d:00' % int(data['req_runtime'])
-        return data
-
-    def generate(self):
-        app_log.info("Generating form from: %s", self)
-        return Template(super().generate()).render()
 
 
 class ICForm(ParamForm):
@@ -76,7 +22,7 @@ class ICForm(ParamForm):
     def slurm_time_to_min(timestr):
         # Strings look like '1-12:30:00' for 1 day 12 1/2 hours
         s_m_hd = timestr.split(':')
-        days, hours, min, sec = [0] * 4
+        days, hours, mins, sec = [0] * 4
 
         if len(s_m_hd) > 2:
             hd = s_m_hd.pop(0)
@@ -85,8 +31,8 @@ class ICForm(ParamForm):
             else:
                 hours = int(hd)
         if len(s_m_hd) > 1:
-            min = int(s_m_hd.pop(0))
-        return days * 24 * 60 + hours * 60 + min
+            mins = int(s_m_hd.pop(0))
+        return days * 24 * 60 + hours * 60 + mins
 
     def massage_options(self, formdata):
         data = super().massage_options(formdata)

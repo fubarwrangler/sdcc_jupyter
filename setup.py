@@ -7,8 +7,7 @@ from __future__ import print_function
 
 import sys
 
-from distutils.core import setup
-
+from setuptools import setup, find_packages
 
 VERSION = '0.2.0'
 
@@ -24,9 +23,8 @@ with open('requirements.txt') as f:
 def main():
     setup(
         name             = 'sdccjupyter',
-        packages         = ['sdccjupyter'],
-        package_data     = {'sdccjupyter': ['conf/*.cfg', 'cron/*']},
-        # include_package_data = True,
+        packages         = find_packages(),
+        package_data     = {'sdccjupyter': ['conf/*.cfg', 'cron/*', 'static/*.html']},
         version          = VERSION,
         description      = """SDCC Jupyter Spawners""",
         long_description = "",
