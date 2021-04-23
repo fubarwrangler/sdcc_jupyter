@@ -1,49 +1,144 @@
 <hr/>
 <p class="lead">
-Please choose your parameters to run on an IC node 
+Please choose your parameters to run on a node with a GPU
 or select to run locally on the submit node.
 </p>
+{% if partitions|length > 0 -%}
+<fieldset id="icform">
 <div class="form-group row">
-<fieldset id="sdccform">
     <div class="col-sm-3">
-        <label for="partition">Partition</label>
-        <input type="text" class="form-control" id="partition" name="req_partition"/>
+        <label for="partition">Select Partition</label>
+        <select id="partition" class="form-control" name="req_partition" onchange="updatedPartition()">
+            {% for name, _ in partitions %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+        </select>
     </div>
     <div class="col-sm-3">
-        <label for="account">Account</label>
-        <input type="text" class="form-control" id="account" name="req_account"/>
+        <label for="account">Select Account</label>
+        <select id="account" class="form-control" name="req_account" onchange="updatedAccount()">
+
+        </select>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
+        <label for="qos">QOS</label>
+        <select id="qos" class="form-control" name="req_qos" onchange="">
+        </select>
+    </div>
+<!-- </div> -->
+<!-- <div class="form-group row"> -->
+    <div class="col-sm-2">
         <label for="account">GPU</label>
         <select class="form-control" id="container" name="req_gputype"/>
-          <option value=""></option>
+          <option value="">any</option>
           <option value="pascal">Pascal</option>
           <option value="tesla">Tesla</option>
         <select/>
     </div>
-     <div class="col-sm-2">
+    <div class="col-sm-2">
         <label for="runtime">Runtime (min)</label>
         <input type="number" class="form-control" max=960 min=30 step=30 value="120" id="runtime" name="req_runtime"/>
     </div>
+</div>
+<div class="form-group row">
+  <div class=col-sm-5">
+    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#hideextrafields" aria-expanded="false" aria-controls="hideextrafields">
+       +
+    </button>
+    <div class="collapse" id="hideextrafields">
+      <label for="extraopts">Extra SBATCH options</label>
+      <textarea id="extraopts" class="form-control" name="req_extraopts"></textarea>
+    </div>
+  </div>
+</div>
 </fieldset>
-<hr>
-<fieldset id="localcheck">
-    <div class="col-sm-4 checkbox">
+
+<h2 class="text-center">~ or ~</h2>
+<div class="form-group row">
+    <div class="col-sm-3 checkbox">
         <label for="local" class="checkbox">
-            <input type="checkbox" id="local" name="local" onclick="disablesdccform()"/>
-            Run Locally <small>(to submit jobs)</small>
+            <input type="checkbox" id="local" name="local" onclick="disableicform()"/>
+            Run Locally?
         </label>
     </div>
-</fieldset>
 </div>
+{% else -%}
+<div class="form-group row warning">
+    <input name="local" hidden=true value="true"/>
+    <p class="col-sm-12 text-danger bg-warning"> WARNING: You are not in any SLURM
+        partitions, please request membership via <a href="mailto:RT-SDCC-Cluster@bnl.gov">RT-SDCC-Cluster@bnl.gov</a>, you can only spawn locally!
+    </p>
+</div>
+{% endif -%}
+<style>
+.disabled {
+    pointer-events: none;
+    background: lightgrey;
+    /* cursor: not-allowed; */
+}
+</style>
 <script type="text/javascript">
-function disablesdccform() {
+function disableicform() {
   var checkbox = document.getElementById("local");
-  var upperform = document.getElementById("sdccform");
+  var upperform = document.getElementById("icform");
   if (checkbox.checked == true){
     upperform.disabled = true;
   } else {
     upperform.disabled = false;
   }
 }
+
+// [ [partition, account, qos, time], ..., ...]
+var slurmdata = {{ slurm|tojson }};
+
+// [ [partition, time], ...]
+var partdata = {{ partitions|tojson }};
+
+var pselect = document.getElementById('partition');
+var aselect = document.getElementById('account');
+var qselect = document.getElementById('qos');
+var timebox = document.getElementById('runtime');
+
+
+function replaceSelect(selector, values)    {
+    var n = 0;
+    selector.classList.remove("disabled");
+    while (selector.options.length > 0) {
+        selector.remove(0);
+    }
+    for(const v of values)  {
+        n+=1;
+        selector.add(new Option(v, v));
+    }
+    if (n <= 1) {
+        selector.classList.add("disabled");
+    }
+}
+
+
+function updatedPartition() {
+    var partition = pselect.options[pselect.selectedIndex].value;
+    var accounts = new Set(slurmdata.filter(x => x[0] == partition).map(x => x[1]));
+    var newtime = partdata.filter(x => x[0] == partition).map(x => x[1])[0];
+    replaceSelect(aselect, accounts);
+
+    if(timebox.value > newtime) {
+        timebox.value = newtime;
+    } else if (timebox.value < newtime / 2) {
+        timebox.value = newtime / 2;
+    }
+    timebox.max = newtime;
+
+    updatedAccount();
+
+}
+
+function updatedAccount() {
+    var account = aselect.options[aselect.selectedIndex].value;
+    var qos = new Set(slurmdata.filter(x => x[1] == account).map(x => x[2]));
+    replaceSelect(qselect, qos);
+}
+updatedPartition();
+
+
 </script>

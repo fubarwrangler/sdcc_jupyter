@@ -7,7 +7,7 @@ from tornado.log import app_log
 from batchspawner import SlurmSpawner
 from jupyterhub.spawner import LocalProcessSpawner
 
-from .formspawners import FormMixin, WrapFormSpawner
+from ..formspawners import FormMixin, WrapFormSpawner
 
 
 class SDCCSlurmSpawner(FormMixin, SlurmSpawner):

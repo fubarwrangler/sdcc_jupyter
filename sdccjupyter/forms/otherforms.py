@@ -1,7 +1,7 @@
 from jinja2 import Template
 from tornado.log import app_log
 
-from .formspawners import ParamForm
+from ..formspawners import ParamForm
 
 import sqlite3
 

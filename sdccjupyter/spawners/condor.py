@@ -3,7 +3,7 @@ from traitlets import Unicode
 
 from batchspawner import CondorSpawner
 
-from .formspawners import FormMixin
+from ..formspawners import FormMixin
 
 
 class SDCCCondorSpawner(FormMixin, CondorSpawner):

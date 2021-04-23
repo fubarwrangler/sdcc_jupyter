@@ -1,3 +1,4 @@
-from .condor import NSLSSpawner
-from .localspawner import LocalPathOverrideSpawner
-from .sdccslurm import SDCCSpawn
+from .condor import SDCCCondorSpawner
+from .local import LocalPathOverrideSpawner
+from .slurm import SDCCSlurmSpawner
+from .omnispawn import SDCCOmniSpawner
