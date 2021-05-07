@@ -1,3 +1,5 @@
+from tornado.log import app_log
+
 from .slurm import SDCCSlurmSpawner
 from .condor import SDCCCondorSpawner
 
@@ -5,7 +7,7 @@ from ..formspawners import WrapFormSpawner, FormMixin
 
 
 # Inherit from the class you want to use the form from...
-class SDCCOmniSpawner(FormMixin, WrapFormSpawner):
+class SDCCOmniSpawner(WrapFormSpawner):
 
     def set_class(self, data):
         app_log.debug("Choose class data: %s", data)
