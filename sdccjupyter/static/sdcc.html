@@ -2,15 +2,16 @@
 <div>
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Main /
+    <li role="presentation" class="active"><a href="#htc" aria-controls="htc" role="tab" data-toggle="tab">Main /
         HTCondor Pool</a></li>
-    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">IC / HPC Systems</a>
+    <li role="presentation"><a href="#hpc" aria-controls="hpc" role="tab" data-toggle="tab">IC / HPC Systems</a>
     </li>
   </ul>
 
   <!-- Tab panes -->
   <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="home">
+    <p>Run a notebook on the HTC systems</p>
+    <div role="tabpanel" class="tab-pane" id="hpc">
       {% if partitions|length > 0 -%}
       <fieldset id="icform">
         <div class="form-group row">
@@ -50,13 +51,15 @@
           </div>
         </div>
         <div class="form-group row">
-          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#hideextrafields"
-            aria-expanded="false" aria-controls="hideextrafields">
-            +
-          </button>
-          <div class="collapse" id="hideextrafields">
-            <label for="extraopts">Extra SBATCH options</label>
-            <textarea id="extraopts" class="form-control" name="req_extraopts"></textarea>
+          <div class="col-sm-8">
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#hideextrafields"
+              aria-expanded="false" aria-controls="hideextrafields">
+              +
+            </button>
+            <div class="collapse" id="hideextrafields">
+              <label for="extraopts">Extra SBATCH options</label>
+              <textarea id="extraopts" class="form-control" name="req_extraopts"></textarea>
+            </div>
           </div>
         </div>
       </fieldset>
@@ -71,7 +74,7 @@
       </div>
       {% endif -%}
     </div>
-    <div role="tabpanel" class="tab-pane" id="profile">
+    <div role="tabpanel" class="tab-pane active" id="htc">
       <div class="form group row">
         <div class="col-sm-3">
           <label for="runtime">Dedicated CPUs</label>
@@ -85,6 +88,7 @@
     </div>
   </div>
 </div>
+<input type=hidden id="spawntype" name="spawntype" value="htc">
 
 
 <style>
@@ -157,5 +161,8 @@
   }
   updatedPartition();
 
-
+  // Change hidden input to indicate which tab is active
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    $('#spawntype').val($(e.target).attr('aria-controls'));
+  });
 </script>

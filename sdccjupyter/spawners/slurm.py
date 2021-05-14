@@ -19,7 +19,7 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
     req_kpath = Unicode('/u0b/software/jupyter/')
 
     def check_path_override(self, account):
-        kern_cfgfile = 'conf/kerneloverride.cfg'
+        kern_cfgfile = '../conf/kerneloverride.cfg'
         path = os.path.join(os.path.dirname(__file__), kern_cfgfile)
         with open(path) as fp:
             for regex, jp in (x.split() for x in fp):

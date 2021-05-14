@@ -12,7 +12,7 @@ def primary_group(user):
     return grp.getgrgid(gid).gr_name
 
 
-def override_path(username, cfgpath="conf/pathoverride.cfg"):
+def override_path(username, cfgpath="../conf/pathoverride.cfg"):
 
     def parse_pathlist(paths):
         append = paths.startswith("+")
@@ -23,6 +23,7 @@ def override_path(username, cfgpath="conf/pathoverride.cfg"):
 
     if not cfgpath.startswith('/'):
         cfgpath = os.path.join(os.path.dirname(__file__), cfgpath)
+
     jupyter_path = list()
 
     with open(cfgpath) as fp:
