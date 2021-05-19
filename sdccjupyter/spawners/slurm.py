@@ -12,11 +12,17 @@ from ..formspawners import FormMixin, WrapFormSpawner
 
 class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
 
-    req_jhubpath = Unicode('/u0b/software/jupyter/virtenvs/jhub_hostenv/bin')
+    req_jhubpath = Unicode('/u0b/software/jupyter/virtenvs/labenv3')
     req_runtime = Unicode('30:00')
     req_gputype = Unicode('')
     req_scontainer = Unicode('')
     req_kpath = Unicode('/u0b/software/jupyter/')
+    startup_poll_interval = 1.5
+
+    # Cancel here because it is called by our custom spawner
+    batchspawner_singleuser_cmd = Unicode('')
+    cmd = ['/u0b/software/jupyter/bin/basic_spawner.sh']
+
 
     def check_path_override(self, account):
         kern_cfgfile = '../conf/kerneloverride.cfg'
@@ -56,7 +62,7 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
 #SBATCH --export={keepvars}
 #SBATCH --get-user-env=L
 ''' + extras + '''
-export PATH="{jhubpath}:$PATH"
+export NBENV="{jhubpath}"
 export SCONTAINER="{scontainer}"
 export JUPYTER_PATH="''' + self.req_kpath + '''"
 unset XDG_RUNTIME_DIR
