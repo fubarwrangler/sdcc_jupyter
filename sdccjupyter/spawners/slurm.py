@@ -5,34 +5,23 @@ from traitlets import Unicode
 from tornado.log import app_log
 
 from batchspawner import SlurmSpawner
-from jupyterhub.spawner import LocalProcessSpawner
+from .pathoverride import PathOverrideMixin, override_path_slurm
 
-from ..formspawners import FormMixin, WrapFormSpawner
+from ..formspawners import FormMixin
 
 
-class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
+class SDCCSlurmSpawner(FormMixin, PathOverrideMixin, SlurmSpawner):
 
-    req_jhubpath = Unicode('/u0b/software/jupyter/virtenvs/labenv3')
     req_runtime = Unicode('30:00')
     req_gputype = Unicode('')
     req_scontainer = Unicode('')
-    req_kpath = Unicode('/u0b/software/jupyter/')
+    req_nbenv = Unicode('/u0b/software/jupyter/virtenvs/labenv3')
     startup_poll_interval = 1.5
 
     # Cancel here because it is called by our custom spawner
     batchspawner_singleuser_cmd = Unicode('')
     cmd = ['/u0b/software/jupyter/bin/basic_spawner.sh']
 
-
-    def check_path_override(self, account):
-        kern_cfgfile = '../conf/kerneloverride.cfg'
-        path = os.path.join(os.path.dirname(__file__), kern_cfgfile)
-        with open(path) as fp:
-            for regex, jp in (x.split() for x in fp):
-                if re.match(regex, account):
-                    self.log.info("Matched %s to %s, using jupyter_path = %s",
-                                  account, regex, jp)
-                    self.req_kpath = jp
 
     @property
     def batch_script(self):
@@ -49,7 +38,7 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
             base += [('constraint', '{gputype}')]
         if 'qos' in self.user_options:
             base += [('qos', '{qos}')]
-        self.check_path_override(self.user_options.get('account'))
+
         extras = '\n'.join(['#SBATCH %s' % x for x in
                             self.user_options['extraopts'].split('\n')])
 
@@ -62,9 +51,8 @@ class SDCCSlurmSpawner(FormMixin, SlurmSpawner):
 #SBATCH --export={keepvars}
 #SBATCH --get-user-env=L
 ''' + extras + '''
-export NBENV="{jhubpath}"
+export NBENV="{nbenv}"
 export SCONTAINER="{scontainer}"
-export JUPYTER_PATH="''' + self.req_kpath + '''"
 unset XDG_RUNTIME_DIR
 module load cuda/9.0
 {cmd}
