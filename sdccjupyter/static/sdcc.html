@@ -1,17 +1,28 @@
 <hr />
 <div>
   <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#htc" aria-controls="htc" role="tab" data-toggle="tab">Main /
-        HTCondor Pool</a></li>
-    <li role="presentation"><a href="#hpc" aria-controls="hpc" role="tab" data-toggle="tab">IC / HPC Systems</a>
+  <ul id="tabs" class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a href="#lbpool" aria-controls="lbpool" role="tab" data-toggle="tab">
+        Standard
+      </a>
+    </li>
+    <li role="presentation">
+      <a href="#htc" aria-controls="htc" role="tab" data-toggle="tab">
+        HTCondor Pool
+      </a>
+    </li>
+    <li role="presentation">
+      <a href="#hpc" aria-controls="hpc" role="tab" data-toggle="tab">
+        IC / HPC Systems
+      </a>
     </li>
   </ul>
 
   <!-- Tab panes -->
   <div class="tab-content">
-    <p>Run a notebook on the HTC systems</p>
     <div role="tabpanel" class="tab-pane" id="hpc">
+      <h4>Run a notebook on the IC Cluster</h4>
       {% if partitions|length > 0 -%}
       <fieldset id="icform">
         <div class="form-group row">
@@ -74,7 +85,8 @@
       </div>
       {% endif -%}
     </div>
-    <div role="tabpanel" class="tab-pane active" id="htc">
+    <div role="tabpanel" class="tab-pane" id="htc">
+      <h4>Run a notebook on the HTCondor batch-farm requesting CPU/RAM</h4>
       <div class="form group row">
         <div class="col-sm-3">
           <label for="runtime">Dedicated CPUs</label>
@@ -86,6 +98,9 @@
         </div>
       </div>
     </div>
+    <div role="tabpanel" class="tab-pane active" id="lbpool">
+      <h4>Run a notebook on a standard interactive HTCondor submit-node</h4>
+    </div>
   </div>
 </div>
 <input type=hidden id="spawntype" name="spawntype" value="htc">
@@ -96,6 +111,9 @@
     pointer-events: none;
     background: lightgrey;
     /* cursor: not-allowed; */
+  }
+  #tabs {
+    margin-bottom: 20px;
   }
 </style>
 <script type="text/javascript">

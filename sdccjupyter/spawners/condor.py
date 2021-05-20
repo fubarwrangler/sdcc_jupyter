@@ -19,14 +19,18 @@ class SDCCCondorSpawner(FormMixin, CondorSpawner):
 
     @property
     def batch_script(self):
+
         return '''
 Executable = /bin/sh
-Arguments = \"-c 'PATH=$NBENV/bin:$PATH {cmd}'\"
+Arguments = \"-c 'PATH=$NBENV/bin:$PATH exec {cmd}'\"
 Remote_Initialdir = {homedir}
-Output = {homedir}/.jupyterhub.$(clusterid).condor.out
-Error = {homedir}/.jupyterhub.$(clusterid).condor.err
+Output = {homedir}/.jupyterhub.condor.out
+Error = {homedir}/.jupyterhub.condor.err
 ShouldTransferFiles = False
 GetEnv = True
+Request_Memory = {memory}
+Request_Cpus = {nprocs}
 PeriodicRemove = (JobStatus == 1 && NumJobStarts > 1) || JobStatus == 5
+{options}
 Queue
 '''

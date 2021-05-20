@@ -12,7 +12,7 @@ class SDCCOmniSpawner(WrapFormSpawner):
 
     def set_class(self, data):
         app_log.debug("Choose class data: %s", data)
-        if data['spawntype'][0] == 'htc':
+        if data['spawntype'][0] in ['htc', 'lbpool']:
             self.log.info("Choosing condor spawner... %s", data)
             x = SDCCCondorSpawner
             x.form_cls = self.form_cls
