@@ -35,7 +35,7 @@ class OmniForm(ParamForm):
 
     def massage_options(self, formdata):
         data = super().massage_options(formdata)
-        app_log.warning("FD: %s", data)
+        app_log.warning("FD (%s): %s", self.spawner, data)
         intify = {'req_memory', 'req_nprocs'}
         data = {k: int(v) if v in intify else v for k, v in data.items()}
         if data['req_gputype'] == "tesla":
@@ -48,9 +48,11 @@ class OmniForm(ParamForm):
         data['req_runtime'] = '%d:00' % int(data['req_runtime'])
 
         if data['spawntype'] == 'lbpool':
-            data['req_options'] = 'Requirements = (IsJupyterNode =?= True)'
-        else:
-            data['req_options'] = 'Requirements = (IsJupyterNode =!= True)'
+            data['req_options'] = 'Requirements = (IsJupyterSlot =?= True)'
+        elif data['spawntype'] == 'htc':
+            data['req_options'] = 'Requirements = (IsJupyterSlot =!= True)'
+            data['req_nprocs'] = data['cpus']
+            data['req_memory'] = data['ram']
 
         return {k[4:]: v for k, v in data.items()}
 
