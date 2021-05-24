@@ -24,7 +24,7 @@ def main():
     setup(
         name             = 'sdccjupyter',
         packages         = find_packages(),
-        package_data     = {'sdccjupyter': ['conf/*.cfg', 'cron/*', 'static/*.html']},
+        package_data     = {'sdccjupyter': ['conf/*.cfg', 'cron/*', 'static/*.html', 'templates/*.html']},
         version          = VERSION,
         description      = """SDCC Jupyter Spawners""",
         long_description = "",

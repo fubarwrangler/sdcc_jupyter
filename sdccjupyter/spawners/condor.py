@@ -2,11 +2,12 @@
 from traitlets import Unicode
 
 from batchspawner import CondorSpawner
+from .pathoverride import PathOverrideMixin
 
 from ..formspawners import FormMixin
 
 
-class SDCCCondorSpawner(FormMixin, CondorSpawner):
+class SDCCCondorSpawner(FormMixin, PathOverrideMixin, CondorSpawner):
 
     # Maybe allow singularity-image selection logic some day too?
     req_scontainer = Unicode('')

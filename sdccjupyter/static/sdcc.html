@@ -21,12 +21,14 @@
 
   <!-- Tab panes -->
   <div class="tab-content">
+
+    <!-- *********************** SLURM Form ************************ -->
     <div role="tabpanel" class="tab-pane" id="hpc">
       <h4>Run a notebook on the IC Cluster</h4>
       {% if partitions|length > 0 -%}
       <fieldset id="icform">
         <div class="form-group row">
-          <div class="col-sm-3">
+          <div class="col-lg-3 col-md-6">
             <label for="partition">Select Partition</label>
             <select id="partition" class="form-control" name="req_partition" onchange="updatedPartition()">
               {% for name, _ in partitions %}
@@ -34,20 +36,17 @@
               {% endfor %}
             </select>
           </div>
-          <div class="col-sm-3">
+          <div class="col-lg-3 col-md-6">
             <label for="account">Select Account</label>
             <select id="account" class="form-control" name="req_account" onchange="updatedAccount()">
-
             </select>
           </div>
-          <div class="col-sm-2">
+          <div class="col-lg-2 col-md-4">
             <label for="qos">QOS</label>
             <select id="qos" class="form-control" name="req_qos" onchange="">
             </select>
           </div>
-          <!-- </div> -->
-          <!-- <div class="form-group row"> -->
-          <div class="col-sm-2">
+          <div class="col-lg-2 col-md-4">
             <label for="account">GPU</label>
             <select class="form-control" id="container" name="req_gputype" />
             <option value="">any</option>
@@ -55,14 +54,14 @@
             <option value="tesla">Tesla</option>
             <select />
           </div>
-          <div class="col-sm-2">
+          <div class="col-lg-2 col-md-4">
             <label for="runtime">Runtime (min)</label>
             <input type="number" class="form-control" max=960 min=30 step=30 value="120" id="runtime"
               name="req_runtime" />
           </div>
         </div>
         <div class="form-group row">
-          <div class="col-sm-8">
+          <div class="col-lg-6 col-md-8">
             <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#hideextrafields"
               aria-expanded="false" aria-controls="hideextrafields">
               +
@@ -79,25 +78,34 @@
         <input name="local" hidden=true value="true" />
         <p class="col-sm-12 text-danger bg-warning"> WARNING: You are not in any SLURM
           partitions, please request membership via <a
-            href="mailto:RT-SDCC-Cluster@bnl.gov">RT-SDCC-Cluster@bnl.gov</a>,
-          you can only spawn locally!
+            href="mailto:RT-SDCC-Cluster@bnl.gov">RT-SDCC-Cluster@bnl.gov</a>
         </p>
       </div>
       {% endif -%}
     </div>
+
+
+    <!-- *********************** HTCondor Form ************************ -->
     <div role="tabpanel" class="tab-pane" id="htc">
       <h4>Run a notebook on the HTCondor batch-farm requesting CPU/RAM</h4>
-      <div class="form group row">
-        <div class="col-sm-3">
+      <div class="form-group row">
+        <div class="col-sm-5 col-md-3">
           <label for="runtime">Dedicated CPUs</label>
           <input type="number" class="form-control" max=64 min=1 step=1 value="1" id="cpus" name="cpus" />
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-5 col-md-3">
           <label for="runtime">Memory (Mb)</label>
-          <input type="number" class="form-control" max=64000 min=200 step=50 value="1500" id="ram" name="ram" />
+          <input type="number" class="form-control" max=64000 min=300 step=100 value="1500" id="ram" name="ram" />
         </div>
       </div>
+      <div class="form-group row">
+        <p class="col-sm-8 text-danger bg-warning" style="margin-left: 1em">
+          WARNING: This may time-out if the condor farm is very busy and/or if you request a lot of resources
+        </p>
+      </div>
     </div>
+
+    <!-- ******************** No Form Just Spawn ******************* -->
     <div role="tabpanel" class="tab-pane active" id="lbpool">
       <h4>Run a notebook on a standard interactive HTCondor submit-node</h4>
     </div>
@@ -114,6 +122,9 @@
   }
   #tabs {
     margin-bottom: 20px;
+  }
+  div.form-group > div {
+    margin-top: 10px;
   }
 </style>
 <script type="text/javascript">
