@@ -57,9 +57,9 @@ class PathOverrideMixin:
         env = super().get_env()
         paths = override_path_uid(self.user.name)
 
-        slurmaccount = self.user_options.get('account')
-        if slurmaccount:
-            paths = override_path_slurm(slurmaccount)
+        if self.user_options.get('spawntype'):
+            paths = override_path_slurm(self.user_options.get('account'))
+
         env['JUPYTER_PATH'] = ":".join(paths)
         app_log.info("Path override: set JUPYTER_PATH to %s", env['JUPYTER_PATH'])
         return env

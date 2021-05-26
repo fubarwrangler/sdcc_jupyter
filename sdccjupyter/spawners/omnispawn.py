@@ -22,3 +22,10 @@ class SDCCOmniSpawner(WrapFormSpawner):
             x = SDCCSlurmSpawner
             x.form_cls = self.form_cls
             return x
+
+    # def load_child_class(self, state):
+    #     try:
+    #         self.child_profile = state['profile']
+    #     except KeyError:
+    #         self.child_profile = ''
+    #     self.select_profile(self.child_profile)

@@ -11,6 +11,9 @@ class SDCCCondorSpawner(FormMixin, PathOverrideMixin, CondorSpawner):
 
     # Maybe allow singularity-image selection logic some day too?
     req_scontainer = Unicode('')
+
+    req_nbenv = Unicode('/u0b/software/jupyter/virtenvs/labenv3')
+
     startup_poll_interval = 1.5
 
     # Cancel here because it is called by our custom spawner
@@ -28,6 +31,7 @@ Remote_Initialdir = {homedir}
 Output = {homedir}/.jupyterhub.condor.out
 Error = {homedir}/.jupyterhub.condor.err
 ShouldTransferFiles = False
+Environment = NBENV={nbenv}
 GetEnv = True
 Request_Memory = {memory}
 Request_Cpus = {nprocs}
