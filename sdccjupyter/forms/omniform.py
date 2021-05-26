@@ -35,7 +35,7 @@ class OmniForm(ParamForm):
 
     def massage_options(self, formdata):
         data = super().massage_options(formdata)
-        app_log.warning("FD (%s): %s", self.spawner, data)
+        app_log.warning("massage_options(omniform) (%s): %s", self.spawner, data)
         intify = {'req_memory', 'req_nprocs'}
         data = {k: int(v) if v in intify else v for k, v in data.items()}
         if data['req_gputype'] == "tesla":
@@ -54,7 +54,10 @@ class OmniForm(ParamForm):
             data['req_nprocs'] = data['cpus']
             data['req_memory'] = data['ram']
 
-        return {k[4:]: v for k, v in data.items()}
+        def no_req(k):
+            return k[4:] if k.startswith('req_') else k
+
+        return {no_req(k): v for k, v in data.items()}
 
     def generate(self):
         db = sqlite3.connect(self.db_path)

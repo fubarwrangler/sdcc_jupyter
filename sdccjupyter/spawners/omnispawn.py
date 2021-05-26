@@ -6,26 +6,30 @@ from .local import LocalPathOverrideSpawner
 
 from ..formspawners import WrapFormSpawner, FormMixin
 
+from traitlets import Type
+from jupyterhub.spawner import Spawner
+
+
 
 # Inherit from the class you want to use the form from...
 class SDCCOmniSpawner(WrapFormSpawner):
 
+    child_class = Type(Spawner,
+                       config=True,
+                       help="""The class to wrap for spawning single-user servers.
+                               Should be a subclass of Spawner.
+                            """
+                       )
+
     def set_class(self, data):
-        app_log.debug("Choose class data: %s", data)
-        if data['spawntype'][0] in ['htc', 'lbpool']:
+        self.log.info("set_class: data=%s", data)
+
+        if data.get('spawntype') in ['htc', 'lbpool']:
             self.log.info("Choosing condor spawner... %s", data)
-            x = SDCCCondorSpawner
-            x.form_cls = self.form_cls
-            return x
+            self.child_class = SDCCCondorSpawner
         else:
             self.log.info("Choosing SLURM spawner...")
-            x = SDCCSlurmSpawner
-            x.form_cls = self.form_cls
-            return x
+            self.child_class = SDCCSlurmSpawner
 
-    # def load_child_class(self, state):
-    #     try:
-    #         self.child_profile = state['profile']
-    #     except KeyError:
-    #         self.child_profile = ''
-    #     self.select_profile(self.child_profile)
+        self.child_config = data
+        self.child_class.user_options = data

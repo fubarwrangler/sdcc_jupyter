@@ -48,6 +48,7 @@ class FormMixin(HasTraits):
         return self.form_cls(self).generate()
 
     def options_from_form(self, formdata):
+        self.log.warning("options_from_form(mixin): formdata massaging")
         return self.form_cls(self).massage_options(formdata)
 
 
@@ -58,19 +59,24 @@ class WrapFormSpawner(FormMixin, WrapSpawner):
         to return a Spawner class to use
     """
 
-    def options_from_form(self, formdata):
-        self.child_class = self.set_class(formdata)
-        self.child_class.formdata = formdata
-        if hasattr(self.child_class, 'form_cls'):
-            self.log.debug("WrapForm: Set child config from child class's form_cls: %s",
-                           self.child_class.form_cls)
-            self.child_config = self.child_class.form_cls(self).massage_options(formdata)
-            self.child_class.user_options = self.child_config
-        else:
-            self.log.debug("No child config found")
-            self.child_config = {}
-        self.log.info("Spawner child-config: %s", self.child_config)
-        return {}
+    # load/get/clear : save/restore child_profile (and on load, use it to update child class/config)
 
     def set_class(self, data):
-        raise NotImplementedError('Must implement in subclass')
+        # Set self.child_class and self.child_config here ...
+        raise NotImplementedError('Must set_class based on form or saved cfg')
+
+    def construct_child(self):
+        self.log.info("construct_child")
+        self.set_class(self.user_options)
+        # self.child_class.user_options = self.child_class.form_cls(self).massage_options(formdata)
+        super().construct_child()
+
+    def load_child_class(self, state):
+        self.log.info("Load_child_class: state=%s", state)
+        self.child_state = state
+        self.set_class(state)
+
+    def get_state(self):
+        state = super().get_state()
+        state.update(self.child_config)
+        return state
