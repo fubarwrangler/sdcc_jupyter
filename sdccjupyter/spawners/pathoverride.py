@@ -57,7 +57,8 @@ class PathOverrideMixin:
         env = super().get_env()
         paths = override_path_uid(self.user.name)
 
-        if self.user_options.get('spawntype'):
+        if self.user_options.get('spawntype') == 'hpc':
+            app_log.info("Overriding based on SLURM account")
             paths = override_path_slurm(self.user_options.get('account'))
 
         env['JUPYTER_PATH'] = ":".join(paths)

@@ -25,11 +25,9 @@ class SDCCSlurmSpawner(FormMixin, PathOverrideMixin, SlurmSpawner):
 
     @property
     def batch_script(self):
-        self.log.info("My Actual Options: %s", self.user_options)
+        self.log.info("SLURM Actual Options: %s", self.user_options)
         base = [('partition', '{partition}'), ('account', '{account}'),
                 ('time', '{runtime}')]
-        if 'cpus' in self.user_options:
-            base += [('cpus-per-task', '{nprocs}')]
         if 'memory' in self.user_options:
             base += [('mem', '{memory}G')]
         if 'ngpus' in self.user_options:

@@ -36,7 +36,7 @@ class OmniForm(ParamForm):
     def massage_options(self, formdata):
         data = super().massage_options(formdata)
         app_log.warning("massage_options(omniform) (%s): %s", self.spawner, data)
-        intify = {'req_memory', 'req_nprocs'}
+        intify = {'req_memory', 'req_nprocs', 'cpus', 'ram'}
         data = {k: int(v) if v in intify else v for k, v in data.items()}
         if data['req_gputype'] == "tesla":
             data['req_ngpus'] = '4'

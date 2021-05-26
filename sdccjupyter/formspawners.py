@@ -73,8 +73,11 @@ class WrapFormSpawner(FormMixin, WrapSpawner):
 
     def load_child_class(self, state):
         self.log.info("Load_child_class: state=%s", state)
-        self.child_state = state
-        self.set_class(state)
+        self.child_state = state.get('child_state', {})
+        if state.get('child_conf', {}):
+            self.user_options = self.form_cls(self).massage_options(state['child_conf'])
+        else:
+            self.user_options = {}
 
     def get_state(self):
         state = super().get_state()

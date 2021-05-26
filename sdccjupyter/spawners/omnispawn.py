@@ -25,7 +25,7 @@ class SDCCOmniSpawner(WrapFormSpawner):
         self.log.info("set_class: data=%s", data)
 
         if data.get('spawntype') in ['htc', 'lbpool']:
-            self.log.info("Choosing condor spawner... %s", data)
+            self.log.info("Choosing condor spawner...")
             self.child_class = SDCCCondorSpawner
         else:
             self.log.info("Choosing SLURM spawner...")

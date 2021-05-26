@@ -23,7 +23,7 @@ class SDCCCondorSpawner(FormMixin, PathOverrideMixin, CondorSpawner):
 
     @property
     def batch_script(self):
-
+        self.log.info("HTCondor Actual Options: %s", self.user_options)
         return '''
 Executable = /bin/sh
 Arguments = \"-c 'PATH=$NBENV/bin:$PATH exec {cmd}'\"

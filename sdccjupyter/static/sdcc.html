@@ -128,16 +128,6 @@
   }
 </style>
 <script type="text/javascript">
-  function disableicform() {
-    var checkbox = document.getElementById("local");
-    var upperform = document.getElementById("icform");
-    if (checkbox.checked == true) {
-      upperform.disabled = true;
-    } else {
-      upperform.disabled = false;
-    }
-  }
-
   // [ [partition, account, qos, time], ..., ...]
   var slurmdata = {{ slurm| tojson }};
 
