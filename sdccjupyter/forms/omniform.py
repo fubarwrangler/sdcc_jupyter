@@ -3,6 +3,7 @@ from jinja2 import Template
 from tornado.log import app_log
 
 from ..formspawners import ParamForm
+from ..spawners.laboverride import get_lab_locations
 
 
 class OmniForm(ParamForm):
@@ -49,10 +50,14 @@ class OmniForm(ParamForm):
 
         if data['spawntype'] == 'lbpool':
             data['req_options'] = 'Requirements = (IsJupyterSlot =?= True)'
+            data['req_nbenv'] = data['lbpool_nbenv']
         elif data['spawntype'] == 'htc':
             data['req_options'] = 'Requirements = (IsJupyterSlot =!= True)'
             data['req_nprocs'] = data['cpus']
             data['req_memory'] = data['ram']
+            data['req_nbenv'] = data['htc_nbenv']
+        else:
+            data['req_nbenv'] = data['ic_nbenv']
 
         def no_req(k):
             return k[4:] if k.startswith('req_') else k
@@ -72,10 +77,14 @@ class OmniForm(ParamForm):
             row[3] -= row[3] % 30
             slurm_params.append(row)
 
-        vars = {
+        labs = get_lab_locations(self.spawner.user.name)
+
+        template_vars = {
             'partitions': list(sorted({(x[0], x[3]) for x in slurm_params})),
             'slurm': slurm_params,
+            'hpcenvs':  [(a, b) for a, b in labs if not b.startswith('/cvmfs/')],
+            'htcenvs':  [(a, b) for a, b in labs if not b.startswith('/hpcgpfs')],
         }
         db.close()
 
-        return Template(super().generate()).render(**vars)
+        return Template(super().generate()).render(**template_vars)

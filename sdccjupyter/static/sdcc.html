@@ -1,3 +1,19 @@
+{% macro nbenvs(var, name) %}
+
+<div class="form-group row">
+  <div class="col-lg-6 col-md-8">
+  <label>Select JupyterLab Environment</label>
+    {% for k, v in var %}
+    <div class="radio">
+      <label>
+        <input type="radio" name="{{ name }}" value="{{ v }}" {% if loop.first %}checked{% endif %}/>
+      {{ k }}
+      </label>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endmacro %}
 <hr />
 <div>
   <!-- Nav tabs -->
@@ -72,6 +88,7 @@
             </div>
           </div>
         </div>
+      {{ nbenvs(hpcenvs, "ic_nbenv") }}
       </fieldset>
       {% else -%}
       <div class="form-group row warning">
@@ -103,11 +120,13 @@
           WARNING: This may time-out if the condor farm is very busy and/or if you request a lot of resources
         </p>
       </div>
+      {{ nbenvs(htcenvs, "htc_nbenv") }}
     </div>
 
     <!-- ******************** No Form Just Spawn ******************* -->
     <div role="tabpanel" class="tab-pane active" id="lbpool">
       <h4>Run a notebook on a standard interactive HTCondor submit-node</h4>
+      {{ nbenvs(htcenvs, "lbpool_nbenv") }}
     </div>
   </div>
 </div>

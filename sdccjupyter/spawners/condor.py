@@ -12,7 +12,7 @@ class SDCCCondorSpawner(FormMixin, PathOverrideMixin, CondorSpawner):
     # Maybe allow singularity-image selection logic some day too?
     req_scontainer = Unicode('')
 
-    req_nbenv = Unicode('/u0b/software/jupyter/virtenvs/labenv3')
+    req_nbenv = Unicode('/cvmfs/sdcc.bnl.gov/jupyter/virtualenv/labenv')
 
     startup_poll_interval = 1.5
 

@@ -1,0 +1,24 @@
+# Map "English Location Name" -> "Path" of virtualenv where jupyterlab lives
+locations:
+    USATLAS: /cvmfs/atlas.sdcc.bnl.gov/jupyter/venv/notebook
+    sPHENIX: /cvmfs/sphenix.sdcc.bnl.gov/foo
+    PHENIX: /cvmfs/phenix.sdcc.bnl.gov/bar
+    Default Condor: /cvmfs/sdcc.bnl.gov/jupyter/virtualenv/labenv
+    Default HPC: /u0b/software/jupyter/virtenvs/labenv3/
+    CFN: /hpcgpfs01/software/jupyter/what
+
+# Map GID -> list of jupyterlab locations available
+groups:
+    rhphenix:
+        - PHENIX
+        - sPHENIX
+    sphenix:
+        - sPHENIX
+    usatlas:
+        - USATLAS
+    rhstaff:
+        - USATLAS
+    all:
+        - Default Condor
+        - Default HPC
+        - CFN

@@ -1,10 +1,10 @@
 
 import os
 import re
-import grp
-import pwd
 
 from tornado.log import app_log
+
+from .utils import primary_group
 
 
 def override(key, file):
@@ -28,11 +28,8 @@ def override(key, file):
 
     return jupyter_path
 
-def override_path_uid(username, cfgpath="../conf/pathoverride.cfg"):
 
-    def primary_group(user):
-        gid = pwd.getpwnam(user).pw_gid
-        return grp.getgrgid(gid).gr_name
+def override_path_uid(username, cfgpath="../conf/pathoverride.cfg"):
 
     group = primary_group(username)
 
